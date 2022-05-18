@@ -158,6 +158,88 @@ public class ExecutorServiceImpl extends BaseServiceImpl implements ExecutorServ
         return result;
     }
 
+
+    /**
+     * bahsks 【项目】初始化执行
+     * @param loginUser
+     * @param projectCode
+     * @param processDefinitionCode
+     * @param cronTime
+     * @param commandType
+     * @param failureStrategy
+     * @param startNodeList
+     * @param taskDependType
+     * @param warningType
+     * @param warningGroupId
+     * @param runMode
+     * @param processInstancePriority
+     * @param workerGroup
+     * @param environmentCode
+     * @param timeout
+     * @param startParams
+     * @param expectedParallelismNumber
+     * @param dryRun
+     * @param startParamName
+     * @return
+     */
+    @Override
+    public Map<String, Object> initExecProcessInstance(User loginUser, long projectCode,
+                                                       long processDefinitionCode, String cronTime, CommandType commandType,
+                                                       FailureStrategy failureStrategy, String startNodeList,
+                                                       TaskDependType taskDependType, WarningType warningType, int warningGroupId,
+                                                       RunMode runMode,
+                                                       Priority processInstancePriority, String workerGroup, Long environmentCode, Integer timeout,
+                                                       Map<String, String> startParams, Integer expectedParallelismNumber,
+                                                       int dryRun, String startParamName) {
+        Project project = projectMapper.queryByCode(projectCode);
+        //check user access for project
+        Map<String, Object> result = projectService.checkProjectAndAuth(loginUser, project, projectCode);
+        if (result.get(Constants.STATUS) != Status.SUCCESS) {
+            return result;
+        }
+        // timeout is invalid
+        if (timeout <= 0 || timeout > MAX_TASK_TIMEOUT) {
+            putMsg(result, Status.TASK_TIMEOUT_PARAMS_ERROR);
+            return result;
+        }
+
+        // check process define release state
+        ProcessDefinition processDefinition = processDefinitionMapper.queryByCode(processDefinitionCode);
+        result = checkProcessDefinitionValid(projectCode, processDefinition, processDefinitionCode);
+        if (result.get(Constants.STATUS) != Status.SUCCESS) {
+            return result;
+        }
+
+        if (!checkTenantSuitable(processDefinition)) {
+            logger.error("there is not any valid tenant for the process definition: id:{},name:{}, ",
+                    processDefinition.getId(), processDefinition.getName());
+            putMsg(result, Status.TENANT_NOT_SUITABLE);
+            return result;
+        }
+
+        // check master exists
+        if (!checkMasterExists(result)) {
+            return result;
+        }
+
+        /**
+         * create command
+         */
+        int create = this.createCommand(commandType, processDefinition.getCode(),
+                taskDependType, failureStrategy, startNodeList, cronTime, warningType, loginUser.getId(),
+                warningGroupId, runMode, processInstancePriority, workerGroup, environmentCode, startParams, expectedParallelismNumber, dryRun);
+
+        if (create > 0) {
+            processDefinition.setDescription(startParams.get(startParamName));
+            processDefinition.setWarningGroupId(warningGroupId);
+            processDefinitionMapper.updateById(processDefinition);
+            putMsg(result, Status.SUCCESS);
+        } else {
+            putMsg(result, Status.START_PROCESS_INSTANCE_ERROR);
+        }
+        return result;
+    }
+
     /**
      * check whether master exists
      *

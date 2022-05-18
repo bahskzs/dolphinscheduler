@@ -17,7 +17,7 @@
 #
 spring:
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://172.27.64.77:3306/db_bsd?useUnicode=true&characterEncoding=UTF-8
     username: root
     password: Bosssoft@2021

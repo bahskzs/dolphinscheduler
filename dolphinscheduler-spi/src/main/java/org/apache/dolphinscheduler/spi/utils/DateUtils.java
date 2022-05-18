@@ -18,13 +18,13 @@
 package org.apache.dolphinscheduler.spi.utils;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Objects;
-import java.util.TimeZone;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DateUtils {
 
+    private static final String FORMAT = "yyyyMMdd";
     static final long C0 = 1L;
     static final long C1 = C0 * 1000L;
     static final long C2 = C1 * 1000L;
@@ -59,6 +60,24 @@ public class DateUtils {
     public static String formatTimeStamp(long timeMillis) {
         return formatTimeStamp(timeMillis, DEFAULT_DATETIME_FORMATTER);
     }
+
+    /**
+     * 比较两个时间直接的间隔期间
+     * @param start
+     * @param end
+     * @return
+     */
+    public static List<String> getDates(String start, String end) {
+        List<String> dates = new ArrayList<>();
+        LocalDate startDate = LocalDate.parse(start, DateTimeFormatter.ofPattern(FORMAT)).plusDays(1);
+        LocalDate endDate = LocalDate.parse(end, DateTimeFormatter.ofPattern(FORMAT));
+        long dex = ChronoUnit.DAYS.between(startDate, endDate);
+        if (dex > 0) {
+            Stream.iterate(startDate, d -> d.plusDays(1)).limit(dex + 1).forEach(f -> dates.add(f.format(DateTimeFormatter.ofPattern(FORMAT))));
+        }
+        return dates;
+    }
+
 
     /**
      * @param timeMillis timeMillis like System.currentTimeMillis()

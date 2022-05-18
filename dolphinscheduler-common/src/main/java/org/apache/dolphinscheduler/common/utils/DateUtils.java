@@ -21,19 +21,18 @@ import org.apache.dolphinscheduler.common.Constants;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class DateUtils {
+
+    private static final String FORMAT = "yyyyMMdd";
 
     static final long C0 = 1L;
     static final long C1 = C0 * 1000L;
@@ -524,6 +523,33 @@ public final class DateUtils {
 
         public static long toDurationHours(long d) {
             return (d % (C6 / C2)) / (C5 / C2);
+        }
+
+    }
+
+
+    /**
+     * 比较两个时间直接的间隔期间
+     * @param start
+     * @param end
+     * @return
+     */
+        public static List<String> getDates(String start, String end) {
+            List<String> dates = new ArrayList<>();
+            dates.add(start);
+            LocalDate startDate = LocalDate.parse(start, DateTimeFormatter.ofPattern(FORMAT)).plusDays(1);
+            LocalDate endDate = LocalDate.parse(end, DateTimeFormatter.ofPattern(FORMAT));
+            long dex = ChronoUnit.DAYS.between(startDate, endDate);
+            if (dex > 0) {
+                Stream.iterate(startDate, d -> d.plusDays(1)).limit(dex + 1).forEach(f -> dates.add(f.format(DateTimeFormatter.ofPattern(FORMAT))));
+            }
+            return dates;
+        }
+
+    public static void main(String[] args) {
+        List<String> dates = DateUtils.getDates("20220501", "20220516");
+        for (String date : dates) {
+            System.out.println(date);
         }
 
     }

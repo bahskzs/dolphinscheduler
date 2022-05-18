@@ -93,4 +93,6 @@ public interface ExecutorService {
      * @return check result code
      */
     Map<String, Object> startCheckByProcessDefinedCode(long processDefinitionCode);
+
+    Map<String, Object> initExecProcessInstance(User loginUser, long projectCode, long processDefinitionCode, String scheduleTime, CommandType execType, FailureStrategy failureStrategy, String startNodeList, TaskDependType taskDependType, WarningType warningType, int warningGroupId, RunMode runMode, Priority processInstancePriority, String workerGroup, Long environmentCode, Integer timeout, Map<String, String> startParamMap, Integer expectedParallelismNumber, int dryRun,String startParamName);
 }
