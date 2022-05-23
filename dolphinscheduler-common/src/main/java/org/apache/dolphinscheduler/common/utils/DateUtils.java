@@ -30,9 +30,15 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public final class DateUtils {
 
-    private static final String FORMAT = "yyyyMMdd";
+    public static final String ISO_DATE_FORMAT = "yyyyMMdd";
+
+    /**
+     * Expanded ISO 8601 Date format yyyy-MM-dd i.e., 2002-12-25 for the 25th day of December in the year 2002
+     */
+    public static final String ISO_EXPANDED_DATE_FORMAT = "yyyy-MM-dd";
 
     static final long C0 = 1L;
     static final long C1 = C0 * 1000L;
@@ -534,17 +540,20 @@ public final class DateUtils {
      * @param end
      * @return
      */
-        public static List<String> getDates(String start, String end) {
-            List<String> dates = new ArrayList<>();
-            dates.add(start);
-            LocalDate startDate = LocalDate.parse(start, DateTimeFormatter.ofPattern(FORMAT)).plusDays(1);
-            LocalDate endDate = LocalDate.parse(end, DateTimeFormatter.ofPattern(FORMAT));
-            long dex = ChronoUnit.DAYS.between(startDate, endDate);
-            if (dex > 0) {
-                Stream.iterate(startDate, d -> d.plusDays(1)).limit(dex + 1).forEach(f -> dates.add(f.format(DateTimeFormatter.ofPattern(FORMAT))));
-            }
-            return dates;
+    public static List<String> getDates(String start, String end) {
+        List<String> dates = new ArrayList<>();
+        dates.add(start);
+        LocalDate startDate = LocalDate.parse(start, DateTimeFormatter.ofPattern(ISO_DATE_FORMAT)).plusDays(1);
+        LocalDate endDate = LocalDate.parse(end, DateTimeFormatter.ofPattern(ISO_DATE_FORMAT));
+        long dex = ChronoUnit.DAYS.between(startDate, endDate);
+        if (dex > 0) {
+            Stream.iterate(startDate, d -> d.plusDays(1)).limit(dex + 1).forEach(f -> dates.add(f.format(DateTimeFormatter.ofPattern(ISO_DATE_FORMAT))));
+        } else if(dex == 0) {
+            dates.add(end);
         }
+
+        return dates;
+    }
 
     public static void main(String[] args) {
         List<String> dates = DateUtils.getDates("20220501", "20220516");
