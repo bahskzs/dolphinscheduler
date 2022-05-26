@@ -314,12 +314,36 @@ public class SqlTask extends AbstractTaskExecutor {
      */
     private void postSql(Connection connection,
                          List<SqlBinds> postStatementsBinds) throws Exception {
-        for (SqlBinds sqlBind : postStatementsBinds) {
-            try (PreparedStatement pstmt = prepareStatementAndBind(connection, sqlBind)) {
-                int result = pstmt.executeUpdate();
-                logger.info("post statement execute result: {},for sql: {}", result, sqlBind.getSql());
+
+        if(postStatementsBinds.size() > 1 ){
+            for (SqlBinds sqlBind : postStatementsBinds) {
+
+                //TODO 拆分如果传入的postStatementsBinds对应的sqlBinds.getSql() 改造为一次执行多sql
+                String[] sqlStr = sqlBind.getSql().split(";");
+                SqlBinds tempBind = sqlBind;
+
+                try (PreparedStatement pstmt = prepareStatementAndBind(connection, sqlBind)) {
+                    int result = pstmt.executeUpdate();
+                    logger.info("post statement execute result: {},for sql: {}", result, sqlBind.getSql());
+                }
             }
+        } else if(postStatementsBinds.size() == 1 ) {
+            SqlBinds sqlBind = postStatementsBinds.get(0);
+            String[] sqlStr = postStatementsBinds.get(0).getSql().split(";");
+            for(String sql: sqlStr) {
+
+                SqlBinds tempBind = sqlBind;
+                tempBind.setSql(sql);
+                try (PreparedStatement pstmt = prepareStatementAndBind(connection, tempBind)) {
+                    int result = pstmt.executeUpdate();
+                    logger.info("post statement execute result: {},for sql: {}", result, sqlBind.getSql());
+                }
+            }
+
         }
+
+
+
     }
 
     /**
@@ -385,18 +409,24 @@ public class SqlTask extends AbstractTaskExecutor {
         // is the timeout set
         boolean timeoutFlag = taskExecutionContext.getTaskTimeoutStrategy() == TaskTimeoutStrategy.FAILED
                 || taskExecutionContext.getTaskTimeoutStrategy() == TaskTimeoutStrategy.WARNFAILED;
+
+        PreparedStatement stmt = null;
         try {
-            PreparedStatement stmt = connection.prepareStatement(sqlBinds.getSql());
-            if (timeoutFlag) {
-                stmt.setQueryTimeout(taskExecutionContext.getTaskTimeout());
-            }
-            Map<Integer, Property> params = sqlBinds.getParamsMap();
-            if (params != null) {
-                for (Map.Entry<Integer, Property> entry : params.entrySet()) {
-                    Property prop = entry.getValue();
-                    ParameterUtils.setInParameter(entry.getKey(), stmt, prop.getType(), prop.getValue());
+            //TODO 拆分如果传入的postStatementsBinds对应的sqlBinds.getSql() 改造为一次执行多sql
+            logger.info("sqlStr : {}",sqlBinds.getSql());
+
+                stmt = connection.prepareStatement(sqlBinds.getSql());
+                if (timeoutFlag) {
+                    stmt.setQueryTimeout(taskExecutionContext.getTaskTimeout());
                 }
-            }
+                Map<Integer, Property> params = sqlBinds.getParamsMap();
+                if (params != null) {
+                    for (Map.Entry<Integer, Property> entry : params.entrySet()) {
+                        Property prop = entry.getValue();
+                        ParameterUtils.setInParameter(entry.getKey(), stmt, prop.getType(), prop.getValue());
+                    }
+                }
+
             logger.info("prepare statement replace sql : {} ", stmt);
             return stmt;
         } catch (Exception exception) {
@@ -415,7 +445,7 @@ public class SqlTask extends AbstractTaskExecutor {
      */
     private void printReplacedSql(String content, String formatSql, String rgex, Map<Integer, Property> sqlParamsMap) {
         //parameter print style
-        logger.info("after replace sql , preparing : {}", formatSql);
+        logger.info("new after replace sql , preparing : {}", formatSql);
         StringBuilder logPrint = new StringBuilder("replaced sql , parameters:");
         if (sqlParamsMap == null) {
             logger.info("printReplacedSql: sqlParamsMap is null.");
