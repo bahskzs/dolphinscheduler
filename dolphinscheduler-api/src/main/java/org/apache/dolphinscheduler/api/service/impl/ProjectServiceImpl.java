@@ -50,22 +50,24 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import javax.annotation.Resource;
+
 /**
  * project service impl
  **/
 @Service
 public class ProjectServiceImpl extends BaseServiceImpl implements ProjectService {
 
-    @Autowired
+    @Resource
     private ProjectMapper projectMapper;
 
-    @Autowired
+    @Resource
     private ProjectUserMapper projectUserMapper;
 
-    @Autowired
+    @Resource
     private ProcessDefinitionMapper processDefinitionMapper;
 
-    @Autowired
+    @Resource
     private UserMapper userMapper;
 
     /**

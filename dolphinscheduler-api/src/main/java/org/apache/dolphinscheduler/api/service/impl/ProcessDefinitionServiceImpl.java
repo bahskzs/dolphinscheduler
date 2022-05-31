@@ -76,7 +76,6 @@ import org.apache.dolphinscheduler.service.process.ProcessService;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.hadoop.fs.Stat;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -94,12 +93,12 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,63 +121,63 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
 
     private static final String RELEASESTATE = "releaseState";
 
-    @Autowired
+    @Resource
     private ProjectMapper projectMapper;
 
-    @Autowired
+    @Resource
     private ProjectService projectService;
 
-    @Autowired
+    @Resource
     private UserMapper userMapper;
 
-    @Autowired
+    @Resource
     private ProcessDefinitionLogMapper processDefinitionLogMapper;
 
-    @Autowired
+    @Resource
     private ProcessDefinitionMapper processDefinitionMapper;
 
-    @Autowired
+    @Resource
     private ProcessInstanceService processInstanceService;
 
-    @Autowired
+    @Resource
     private TaskInstanceMapper taskInstanceMapper;
 
-    @Autowired
+    @Resource
     private ScheduleMapper scheduleMapper;
 
-    @Autowired
+    @Resource
     private ProcessService processService;
 
-    @Autowired
+    @Resource
     private ProcessTaskRelationMapper processTaskRelationMapper;
 
-    @Autowired
+    @Resource
     private ProcessTaskRelationLogMapper processTaskRelationLogMapper;
 
-    @Autowired
+    @Resource
     TaskDefinitionLogMapper taskDefinitionLogMapper;
 
-    @Autowired
+    @Resource
     private TaskDefinitionMapper taskDefinitionMapper;
 
-    @Autowired
+    @Resource
     private SchedulerService schedulerService;
 
-    @Autowired
+    @Resource
     private TenantMapper tenantMapper;
 
     /**
      * create process definition
      *
-     * @param loginUser login user
-     * @param projectCode project code
-     * @param name process definition name
-     * @param description description
-     * @param globalParams global params
-     * @param locations locations for nodes
-     * @param timeout timeout
-     * @param tenantCode tenantCode
-     * @param taskRelationJson relation json for nodes
+     * @param loginUser          login user
+     * @param projectCode        project code
+     * @param name               process definition name
+     * @param description        description
+     * @param globalParams       global params
+     * @param locations          locations for nodes
+     * @param timeout            timeout
+     * @param tenantCode         tenantCode
+     * @param taskRelationJson   relation json for nodes
      * @param taskDefinitionJson taskDefinitionJson
      * @return create result code
      */
@@ -258,7 +257,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
             throw new ServiceException(Status.CREATE_PROCESS_DEFINITION_ERROR);
         }
         int insertResult = processService.saveTaskRelation(loginUser, processDefinition.getProjectCode(), processDefinition.getCode(),
-            insertVersion, taskRelationList, taskDefinitionLogs, Boolean.TRUE);
+                insertVersion, taskRelationList, taskDefinitionLogs, Boolean.TRUE);
         if (insertResult == Constants.EXIT_CODE_SUCCESS) {
             putMsg(result, Status.SUCCESS);
             result.put(Constants.DATA_LIST, processDefinition);
@@ -339,7 +338,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * query process definition list
      *
-     * @param loginUser login user
+     * @param loginUser   login user
      * @param projectCode project code
      * @return definition list
      */
@@ -361,7 +360,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * query process definition simple list
      *
-     * @param loginUser login user
+     * @param loginUser   login user
      * @param projectCode project code
      * @return definition simple list
      */
@@ -391,12 +390,12 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * query process definition list paging
      *
-     * @param loginUser login user
+     * @param loginUser   login user
      * @param projectCode project code
-     * @param searchVal search value
-     * @param userId user id
-     * @param pageNo page number
-     * @param pageSize page size
+     * @param searchVal   search value
+     * @param userId      user id
+     * @param pageNo      page number
+     * @param pageSize    page size
      * @return process definition page
      */
     @Override
@@ -434,9 +433,9 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * query detail of process definition
      *
-     * @param loginUser login user
+     * @param loginUser   login user
      * @param projectCode project code
-     * @param code process definition code
+     * @param code        process definition code
      * @return process definition detail
      */
     @Override
@@ -486,16 +485,16 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * update  process definition
      *
-     * @param loginUser login user
-     * @param projectCode project code
-     * @param name process definition name
-     * @param code process definition code
-     * @param description description
-     * @param globalParams global params
-     * @param locations locations for nodes
-     * @param timeout timeout
-     * @param tenantCode tenantCode
-     * @param taskRelationJson relation json for nodes
+     * @param loginUser          login user
+     * @param projectCode        project code
+     * @param name               process definition name
+     * @param code               process definition code
+     * @param description        description
+     * @param globalParams       global params
+     * @param locations          locations for nodes
+     * @param timeout            timeout
+     * @param tenantCode         tenantCode
+     * @param taskRelationJson   relation json for nodes
      * @param taskDefinitionJson taskDefinitionJson
      * @return update result code
      */
@@ -606,7 +605,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
                 throw new ServiceException(Status.UPDATE_PROCESS_DEFINITION_ERROR);
             }
             int insertResult = processService.saveTaskRelation(loginUser, processDefinition.getProjectCode(),
-                processDefinition.getCode(), insertVersion, taskRelationList, taskDefinitionLogs, Boolean.TRUE);
+                    processDefinition.getCode(), insertVersion, taskRelationList, taskDefinitionLogs, Boolean.TRUE);
             if (insertResult == Constants.EXIT_CODE_SUCCESS) {
                 putMsg(result, Status.SUCCESS);
                 result.put(Constants.DATA_LIST, processDefinition);
@@ -624,9 +623,9 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * verify process definition name unique
      *
-     * @param loginUser login user
+     * @param loginUser   login user
      * @param projectCode project code
-     * @param name name
+     * @param name        name
      * @return true if process definition name not exists, otherwise false
      */
     @Override
@@ -647,11 +646,33 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     }
 
     /**
-     * delete process definition by code
+     * verify process definition code unique
      *
      * @param loginUser login user
+     * @param name      process name
+     * @param code      code
+     * @return true if process definition code not exists, otherwise false
+     */
+    @Override
+    public Map<String, Object> verifyProcessDefinitionCode(User loginUser,  long code, String name) {
+
+        Map<String, Object> result = new HashMap<>();
+        ProcessDefinition processDefinition = processDefinitionMapper.verifyByDefineCode(name, code);
+        if (processDefinition == null) {
+            putMsg(result, Status.SUCCESS);
+        } else {
+            putMsg(result, Status.PROCESS_DEFINITION_NAME_EXIST, name);
+        }
+        return result;
+    }
+
+
+    /**
+     * delete process definition by code
+     *
+     * @param loginUser   login user
      * @param projectCode project code
-     * @param code process definition code
+     * @param code        process definition code
      * @return delete result code
      */
     @Override
@@ -729,8 +750,9 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
      * 2.delete subWorkProcesses
      * 3.delete processMap
      * 4.delete taskInstances
-     *
+     * <p>
      * todo delete syncly may take a long time when many processInstance
+     *
      * @param processDefinitionCode
      */
     private void syncDeleteWorkflowInstanceByCode(long processDefinitionCode) {
@@ -752,9 +774,9 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * release process definition: online / offline
      *
-     * @param loginUser login user
-     * @param projectCode project code
-     * @param code process definition code
+     * @param loginUser    login user
+     * @param projectCode  project code
+     * @param code         process definition code
      * @param releaseState release state
      * @return release result code
      */
@@ -893,9 +915,9 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * import process definition
      *
-     * @param loginUser login user
+     * @param loginUser   login user
      * @param projectCode project code
-     * @param file process metadata json file
+     * @param file        process metadata json file
      * @return import process
      */
     @Override
@@ -925,7 +947,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
             return false;
         }
         ProcessDefinition processDefinition = dagDataSchedule.getProcessDefinition();
-        //unique check
+        //unique check 重名检查其实就是为了防止导入两次
         Map<String, Object> checkResult = verifyProcessDefinitionName(loginUser, projectCode, processDefinition.getName());
         if (Status.SUCCESS.equals(checkResult.get(Constants.STATUS))) {
             putMsg(result, Status.SUCCESS);
@@ -933,17 +955,34 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
             result.putAll(checkResult);
             return false;
         }
+        checkResult = new HashMap<>();
+        // 检查当前项目是否存在同code,project_code,类似name的流程
+        checkResult = verifyProcessDefinitionCode(loginUser , processDefinition.getCode(), processDefinition.getName());
+        if (Status.SUCCESS.equals(checkResult.get(Constants.STATUS))) {
+            putMsg(result, Status.SUCCESS);
+        } else {
+            result.putAll(checkResult);
+            return false;
+        }
+
+
+        // 获得流程的名称
         String processDefinitionName = recursionProcessDefinitionName(projectCode, processDefinition.getName(), 1);
         processDefinition.setName(processDefinitionName + "_import_" + DateUtils.getCurrentTimeStamp());
         processDefinition.setId(0);
         processDefinition.setProjectCode(projectCode);
         processDefinition.setUserId(loginUser.getId());
-        try {
-            processDefinition.setCode(CodeGenerateUtils.getInstance().genCode());
-        } catch (CodeGenerateException e) {
-            putMsg(result, Status.CREATE_PROCESS_DEFINITION_ERROR);
-            return false;
-        }
+//        try {
+//            // 生成新的code
+//            // TODO 由于生成新的code会导致原有流程存在父子节点失效问题，所以此处设计父子节点不应当生成新code
+//            // 怀疑复制节点有没有可能用的是同一块代码，如果是则不能改。不是则允许改
+//            // verifyProcessDefinitionName 已经验证过该流程未重复了,
+//
+//            processDefinition.setCode(CodeGenerateUtils.getInstance().genCode());
+//        } catch (CodeGenerateException e) {
+//            putMsg(result, Status.CREATE_PROCESS_DEFINITION_ERROR);
+//            return false;
+//        }
         List<TaskDefinition> taskDefinitionList = dagDataSchedule.getTaskDefinitionList();
         Map<Long, Long> taskCodeMap = new HashMap<>();
         Date now = new Date();
@@ -958,15 +997,18 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
             taskDefinitionLog.setUpdateTime(now);
             taskDefinitionLog.setOperator(loginUser.getId());
             taskDefinitionLog.setOperateTime(now);
-            try {
-                long code = CodeGenerateUtils.getInstance().genCode();
-                taskCodeMap.put(taskDefinitionLog.getCode(), code);
-                taskDefinitionLog.setCode(code);
-            } catch (CodeGenerateException e) {
-                logger.error("Task code get error, ", e);
-                putMsg(result, Status.INTERNAL_SERVER_ERROR_ARGS, "Error generating task definition code");
-                return false;
-            }
+            // verifyProcessDefinitionName 已经验证过该流程未重复了,那么对应就使用旧编码
+//            try {
+//                long code = CodeGenerateUtils.getInstance().genCode();
+            //taskCodeMap.put(taskDefinitionLog.getCode(), code);
+            taskCodeMap.put(taskDefinitionLog.getCode(), taskDefinitionLog.getCode());
+            //  taskDefinitionLog.setCode(code);
+            taskDefinitionLog.setCode(taskDefinitionLog.getCode());
+//            } catch (CodeGenerateException e) {
+//                logger.error("Task code get error, ", e);
+//                putMsg(result, Status.INTERNAL_SERVER_ERROR_ARGS, "Error generating task definition code");
+//                return false;
+//            }
             taskDefinitionLogList.add(taskDefinitionLog);
         }
         int insert = taskDefinitionMapper.batchInsert(taskDefinitionLogList);
@@ -1121,9 +1163,9 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * get task node details based on process definition
      *
-     * @param loginUser loginUser
+     * @param loginUser   loginUser
      * @param projectCode project code
-     * @param code process definition code
+     * @param code        process definition code
      * @return task node list
      */
     @Override
@@ -1158,9 +1200,9 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * get task node details map based on process definition
      *
-     * @param loginUser loginUser
+     * @param loginUser   loginUser
      * @param projectCode project code
-     * @param codes define codes
+     * @param codes       define codes
      * @return task node list
      */
     @Override
@@ -1206,7 +1248,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * query process definition all by project code
      *
-     * @param loginUser loginUser
+     * @param loginUser   loginUser
      * @param projectCode project code
      * @return process definitions in the project
      */
@@ -1229,8 +1271,8 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
      * Encapsulates the TreeView structure
      *
      * @param projectCode project code
-     * @param code process definition code
-     * @param limit limit
+     * @param code        process definition code
+     * @param limit       limit
      * @return tree view json data
      */
     @Override
@@ -1373,9 +1415,9 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * batch copy process definition
      *
-     * @param loginUser loginUser
-     * @param projectCode projectCode
-     * @param codes processDefinitionCodes
+     * @param loginUser         loginUser
+     * @param projectCode       projectCode
+     * @param codes             processDefinitionCodes
      * @param targetProjectCode targetProjectCode
      */
     @Override
@@ -1400,9 +1442,9 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
      * batch move process definition
      * Will be deleted
      *
-     * @param loginUser loginUser
-     * @param projectCode projectCode
-     * @param codes processDefinitionCodes
+     * @param loginUser         loginUser
+     * @param projectCode       projectCode
+     * @param codes             processDefinitionCodes
      * @param targetProjectCode targetProjectCode
      */
     @Override
@@ -1540,10 +1582,10 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * switch the defined process definition version
      *
-     * @param loginUser login user
+     * @param loginUser   login user
      * @param projectCode project code
-     * @param code process definition code
-     * @param version the version user want to switch
+     * @param code        process definition code
+     * @param version     the version user want to switch
      * @return switch process definition version result code
      */
     @Override
@@ -1579,11 +1621,11 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * check batch operate result
      *
-     * @param srcProjectCode srcProjectCode
+     * @param srcProjectCode    srcProjectCode
      * @param targetProjectCode targetProjectCode
-     * @param result result
+     * @param result            result
      * @param failedProcessList failedProcessList
-     * @param isCopy isCopy
+     * @param isCopy            isCopy
      */
     private void checkBatchOperateResult(long srcProjectCode, long targetProjectCode,
                                          Map<String, Object> result, List<String> failedProcessList, boolean isCopy) {
@@ -1601,11 +1643,11 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * query the pagination versions info by one certain process definition code
      *
-     * @param loginUser login user info to check auth
+     * @param loginUser   login user info to check auth
      * @param projectCode project code
-     * @param pageNo page number
-     * @param pageSize page size
-     * @param code process definition code
+     * @param pageNo      page number
+     * @param pageSize    page size
+     * @param code        process definition code
      * @return the pagination process definition versions info of the certain process definition
      */
     @Override
@@ -1635,10 +1677,10 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * delete one certain process definition by version number and process definition code
      *
-     * @param loginUser login user info to check auth
+     * @param loginUser   login user info to check auth
      * @param projectCode project code
-     * @param code process definition code
-     * @param version version number
+     * @param code        process definition code
+     * @param version     version number
      * @return delete result code
      */
     @Override
@@ -1673,13 +1715,13 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * create empty process definition
      *
-     * @param loginUser login user
-     * @param projectCode project code
-     * @param name process definition name
-     * @param description description
+     * @param loginUser    login user
+     * @param projectCode  project code
+     * @param name         process definition name
+     * @param description  description
      * @param globalParams globalParams
-     * @param timeout timeout
-     * @param tenantCode tenantCode
+     * @param timeout      timeout
+     * @param tenantCode   tenantCode
      * @param scheduleJson scheduleJson
      * @return process definition code
      */
@@ -1795,14 +1837,14 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * update process definition basic info
      *
-     * @param loginUser login user
-     * @param projectCode project code
-     * @param name process definition name
-     * @param code process definition code
-     * @param description description
+     * @param loginUser    login user
+     * @param projectCode  project code
+     * @param name         process definition name
+     * @param code         process definition code
+     * @param description  description
      * @param globalParams globalParams
-     * @param timeout timeout
-     * @param tenantCode tenantCode
+     * @param timeout      timeout
+     * @param tenantCode   tenantCode
      * @param scheduleJson scheduleJson
      * @return update result code
      */
@@ -1914,9 +1956,9 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     /**
      * release process definition and schedule
      *
-     * @param loginUser login user
-     * @param projectCode project code
-     * @param code process definition code
+     * @param loginUser    login user
+     * @param projectCode  project code
+     * @param code         process definition code
      * @param releaseState releaseState
      * @return update result code
      */

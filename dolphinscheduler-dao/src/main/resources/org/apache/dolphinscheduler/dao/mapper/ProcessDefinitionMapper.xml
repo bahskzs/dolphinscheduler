@@ -165,4 +165,12 @@
         SELECT DISTINCT(id) as project_id
         FROM t_ds_project
     </select>
+
+    <select id="verifyByDefineCode" resultType="org.apache.dolphinscheduler.dao.entity.ProcessDefinition">
+        select pd.id, pd.code, pd.name, pd.version, pd.release_state, pd.project_code, pd.user_id, pd.description,
+               pd.global_params, pd.flag, pd.locations, pd.warning_group_id, pd.create_time, pd.timeout, pd.tenant_id, pd.update_time
+        from t_ds_process_definition pd
+        WHERE pd.name like concat('%',#{name},'%')
+          and pd.code = #{code}
+    </select>
 </mapper>

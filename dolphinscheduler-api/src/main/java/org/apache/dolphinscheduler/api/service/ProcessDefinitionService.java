@@ -190,6 +190,8 @@ public interface ProcessDefinitionService {
                                                     long projectCode,
                                                     String name);
 
+    Map<String, Object> verifyProcessDefinitionCode(User loginUser, long code, String name);
+
     /**
      * delete process definition by code
      *
