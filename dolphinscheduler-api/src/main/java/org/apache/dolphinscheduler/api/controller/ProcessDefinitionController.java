@@ -483,14 +483,15 @@ public class ProcessDefinitionController extends BaseController {
                                                    @RequestParam(value = "searchVal", required = false) String searchVal,
                                                    @RequestParam(value = "userId", required = false, defaultValue = "0") Integer userId,
                                                    @RequestParam("pageNo") Integer pageNo,
-                                                   @RequestParam("pageSize") Integer pageSize) {
+                                                   @RequestParam("pageSize") Integer pageSize,
+                                                   @RequestParam(value = "taskType",required = false) String taskType) {
         Result result = checkPageParams(pageNo, pageSize);
         if (!result.checkResult()) {
             return result;
         }
         searchVal = ParameterUtils.handleEscapes(searchVal);
 
-        return processDefinitionService.queryProcessDefinitionListPaging(loginUser, projectCode, searchVal, userId, pageNo, pageSize);
+        return processDefinitionService.queryProcessDefinitionListPaging(loginUser, projectCode, searchVal, userId, pageNo, pageSize, taskType);
     }
 
     /**

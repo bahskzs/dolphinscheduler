@@ -20,6 +20,7 @@ package org.apache.dolphinscheduler.api.service.impl;
 import static org.apache.dolphinscheduler.common.Constants.CMD_PARAM_SUB_PROCESS_DEFINE_CODE;
 
 import org.apache.dolphinscheduler.api.dto.DagDataSchedule;
+import org.apache.dolphinscheduler.api.dto.ProcessDefinitionDto;
 import org.apache.dolphinscheduler.api.dto.ScheduleParam;
 import org.apache.dolphinscheduler.api.dto.treeview.Instance;
 import org.apache.dolphinscheduler.api.dto.treeview.TreeViewDto;
@@ -29,10 +30,7 @@ import org.apache.dolphinscheduler.api.service.ProcessDefinitionService;
 import org.apache.dolphinscheduler.api.service.ProcessInstanceService;
 import org.apache.dolphinscheduler.api.service.ProjectService;
 import org.apache.dolphinscheduler.api.service.SchedulerService;
-import org.apache.dolphinscheduler.api.utils.CheckUtils;
-import org.apache.dolphinscheduler.api.utils.FileUtils;
-import org.apache.dolphinscheduler.api.utils.PageInfo;
-import org.apache.dolphinscheduler.api.utils.Result;
+import org.apache.dolphinscheduler.api.utils.*;
 import org.apache.dolphinscheduler.common.Constants;
 import org.apache.dolphinscheduler.common.enums.FailureStrategy;
 import org.apache.dolphinscheduler.common.enums.Priority;
@@ -396,10 +394,11 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
      * @param userId      user id
      * @param pageNo      page number
      * @param pageSize    page size
+     * @param taskType    task type
      * @return process definition page
      */
     @Override
-    public Result queryProcessDefinitionListPaging(User loginUser, long projectCode, String searchVal, Integer userId, Integer pageNo, Integer pageSize) {
+    public Result queryProcessDefinitionListPaging(User loginUser, long projectCode, String searchVal, Integer userId, Integer pageNo, Integer pageSize, String taskType) {
         Result result = new Result();
         Project project = projectMapper.queryByCode(projectCode);
         //check user access for project
@@ -409,10 +408,12 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
             putMsg(result, resultStatus);
             return result;
         }
-
+        //TODO : 需要追加对应的TaskList，用于前端根据任务类型(datax,sql等等)检索对应的流程
+        //  List<TaskDefinitionLog> taskDefinitionList = processService.genTaskDefineList(processTaskRelationMapper.queryByProcessCode(processDefinition.getProjectCode(), processDefinition.getCode()))
         Page<ProcessDefinition> page = new Page<>(pageNo, pageSize);
         IPage<ProcessDefinition> processDefinitionIPage = processDefinitionMapper.queryDefineListPaging(
                 page, searchVal, userId, project.getCode(), isAdmin(loginUser));
+
 
         List<ProcessDefinition> records = processDefinitionIPage.getRecords();
         for (ProcessDefinition pd : records) {
@@ -420,10 +421,39 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
             User user = userMapper.selectById(processDefinitionLog.getOperator());
             pd.setModifyBy(user.getUserName());
         }
+
         processDefinitionIPage.setRecords(records);
-        PageInfo<ProcessDefinition> pageInfo = new PageInfo<>(pageNo, pageSize);
+
+        PageInfo<ProcessDefinitionDto> pageInfo = new PageInfo<>(pageNo, pageSize);
         pageInfo.setTotal((int) processDefinitionIPage.getTotal());
-        pageInfo.setTotalList(processDefinitionIPage.getRecords());
+
+        // 加入taskList
+        List<ProcessDefinitionDto> processDefinitionDtoList = CopyUtil.copyList(records, ProcessDefinitionDto.class);
+        List<ProcessDefinitionDto> processDefinitionDtos = new ArrayList<>();
+        if (StringUtils.isNotEmpty(taskType)) {
+            for (ProcessDefinitionDto processDefinitionDto : processDefinitionDtoList) {
+                List<TaskDefinitionLog> taskDefinitionList =
+                        processService.genTaskDefineList(processTaskRelationMapper.queryByProcessCode(processDefinitionDto.getProjectCode(), processDefinitionDto.getCode()));
+                //查询到的task集合返回给前端
+
+
+                for (TaskDefinitionLog taskDefinitionLog : taskDefinitionList) {
+                    if (taskDefinitionLog.getTaskType().equals(taskType)) {
+
+                        processDefinitionDtos.add(processDefinitionDto);
+                    }
+                }
+
+
+                processDefinitionDto.setTaskDefinitionList(taskDefinitionList);
+
+            }
+            pageInfo.setTotalList(processDefinitionDtos);
+        } else {
+            pageInfo.setTotalList(processDefinitionDtoList);
+        }
+
+
         result.setData(pageInfo);
         putMsg(result, Status.SUCCESS);
 
@@ -654,7 +684,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
      * @return true if process definition code not exists, otherwise false
      */
     @Override
-    public Map<String, Object> verifyProcessDefinitionCode(User loginUser,  long code, String name) {
+    public Map<String, Object> verifyProcessDefinitionCode(User loginUser, long code, String name) {
 
         Map<String, Object> result = new HashMap<>();
         ProcessDefinition processDefinition = processDefinitionMapper.verifyByDefineCode(name, code);
@@ -957,7 +987,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
         }
         checkResult = new HashMap<>();
         // 检查当前项目是否存在同code,project_code,类似name的流程
-        checkResult = verifyProcessDefinitionCode(loginUser , processDefinition.getCode(), processDefinition.getName());
+        checkResult = verifyProcessDefinitionCode(loginUser, processDefinition.getCode(), processDefinition.getName());
         if (Status.SUCCESS.equals(checkResult.get(Constants.STATUS))) {
             putMsg(result, Status.SUCCESS);
         } else {

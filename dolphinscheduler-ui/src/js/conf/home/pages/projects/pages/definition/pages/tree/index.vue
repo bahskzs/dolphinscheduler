@@ -64,7 +64,7 @@
         </div>
         <div class="tree-model" v-show="!isNodata">
           <div class="d3-tree">
-            <svg class='tree' width="100%"></svg>
+            <svg class='tree' width="100%" style="width: 100%"></svg>
           </div>
         </div>
         <m-no-data v-if="isNodata"></m-no-data>

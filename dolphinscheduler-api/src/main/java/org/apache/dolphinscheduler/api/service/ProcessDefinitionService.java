@@ -96,7 +96,8 @@ public interface ProcessDefinitionService {
                                             String searchVal,
                                             Integer userId,
                                             Integer pageNo,
-                                            Integer pageSize);
+                                            Integer pageSize,
+                                            String taskType);
 
     /**
      * query detail of process definition

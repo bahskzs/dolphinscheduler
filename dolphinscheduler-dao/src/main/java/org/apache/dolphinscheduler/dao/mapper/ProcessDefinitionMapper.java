@@ -87,7 +87,7 @@ public interface ProcessDefinitionMapper extends BaseMapper<ProcessDefinition> {
      *
      * @param name name
      * @param code code
-     * @return processDefinition
+     * @return process definition
      */
     ProcessDefinition verifyByDefineCode(@Param("name") String name,
                                          @Param("code") long code);
@@ -125,6 +125,8 @@ public interface ProcessDefinitionMapper extends BaseMapper<ProcessDefinition> {
                                                    @Param("userId") int userId,
                                                    @Param("projectCode") long projectCode,
                                                    @Param("isAdmin") boolean isAdmin);
+
+
 
     /**
      * query all process definition list

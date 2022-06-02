@@ -31,6 +31,14 @@
         and pd.name = #{processDefinitionName}
     </select>
 
+    <select id="verifyByDefineCode" resultType="org.apache.dolphinscheduler.dao.entity.ProcessDefinition">
+        select pd.id, pd.code, pd.name, pd.version, pd.release_state, pd.project_code, pd.user_id, pd.description,
+               pd.global_params, pd.flag, pd.locations, pd.warning_group_id, pd.create_time, pd.timeout, pd.tenant_id, pd.update_time
+        from t_ds_process_definition pd
+        WHERE pd.name like concat('%',#{name},'%')
+          and pd.code = #{code}
+    </select>
+
     <delete id="deleteByCode">
         delete from t_ds_process_definition
         where code = #{code}
@@ -67,6 +75,8 @@
         WHERE p.code = #{projectCode}
         and pd.name = #{processDefinitionName}
     </select>
+
+
     <select id="queryDefineListPaging" resultType="org.apache.dolphinscheduler.dao.entity.ProcessDefinition">
         SELECT td.id, td.code, td.name, td.version, td.release_state, td.project_code, td.user_id, td.description,
         td.global_params, td.flag, td.warning_group_id, td.timeout, td.tenant_id, td.update_time, td.create_time,
@@ -166,11 +176,5 @@
         FROM t_ds_project
     </select>
 
-    <select id="verifyByDefineCode" resultType="org.apache.dolphinscheduler.dao.entity.ProcessDefinition">
-        select pd.id, pd.code, pd.name, pd.version, pd.release_state, pd.project_code, pd.user_id, pd.description,
-               pd.global_params, pd.flag, pd.locations, pd.warning_group_id, pd.create_time, pd.timeout, pd.tenant_id, pd.update_time
-        from t_ds_process_definition pd
-        WHERE pd.name like concat('%',#{name},'%')
-          and pd.code = #{code}
-    </select>
+
 </mapper>

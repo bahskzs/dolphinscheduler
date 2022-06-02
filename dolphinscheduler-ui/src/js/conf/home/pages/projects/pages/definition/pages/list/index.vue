@@ -16,15 +16,21 @@
  */
 <template>
   <div class="wrap-definition">
-    <m-list-construction :title="$t('Process definition')">
+    <m-list-construction :title="$t('Process definition')" >
       <template slot="conditions">
         <m-conditions @on-conditions="_onConditions">
-          <template slot="button-group">
+            <template slot="button-group">
             <el-button size="mini"  @click="() => this.$router.push({name: 'definition-create'})">{{$t('Create process')}}</el-button>
             <el-button size="mini"  @click="_uploading">{{$t('Import process')}}</el-button>
-          </template>
+<!--            <el-input v-model="searchParams.taskType" @keyup.enter.native="_ckQuery" style="width: 200px;" size="mini" :placeholder="$t('Task Type')">-->
+<!--                   <i slot="prefix" class="el-input__icon el-icon-search" ></i>-->
+<!--            </el-input>-->
+            <el-input v-model="taskType" @keydown.enter.native="_ckQuery(taskType)" style="width: 200px;" size="mini" :placeholder="$t('Task Type')">
+                <i slot="prefix" class="el-input__icon el-icon-search" ></i>
+            </el-input>
+            </template>
         </m-conditions>
-      </template>
+      </template >
       <template slot="content">
         <template v-if="processListP.length || total>0">
           <m-list :process-list="processListP" @on-update="_onUpdate" :page-no="searchParams.pageNo" :page-size="searchParams.pageSize"></m-list>
@@ -36,8 +42,8 @@
               :page-size="searchParams.pageSize"
               :current-page.sync="searchParams.pageNo"
               :page-sizes="[10, 30, 50]"
-              layout="sizes, prev, pager, next, jumper"
-              :total="total">
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="totalNum">
             </el-pagination>
           </div>
         </template>
@@ -65,13 +71,15 @@
     name: 'definition-list-index',
     data () {
       return {
-        total: null,
+        taskType: '',
+        totalNum: 0,
         processListP: [],
         isLoading: true,
         searchParams: {
           pageSize: 10,
           pageNo: 1,
           searchVal: '',
+          taskType: '',
           userId: ''
         },
         isLeft: true
@@ -82,6 +90,9 @@
     },
     methods: {
       ...mapActions('dag', ['getProcessListP']),
+      _ckQuery (val) {
+        this.searchParams.taskType = val
+      },
       /**
        * File Upload
        */
@@ -101,7 +112,7 @@
        * conditions
        */
       _onConditions (o) {
-        this.searchParams.searchVal = o.searchVal
+        this.searchParams.searchVal = <o className="searchVal"></o>
         this.searchParams.pageNo = 1
       },
       /**
@@ -120,7 +131,8 @@
           } else {
             this.processListP = []
             this.processListP = res.totalList
-            this.total = res.total
+            this.totalNum = parseInt(res.total)
+            console.log('total : ' + this.totalNum)
             this.isLoading = false
           }
         }).catch(e => {
@@ -132,7 +144,8 @@
       },
       _updateList () {
         this.searchParams.pageNo = 1
-        this.searchParams.searchVal = ''
+        // this.searchParams.searchVal = ''
+        // this.taskType = ''
         this._debounceGET()
       }
     },
