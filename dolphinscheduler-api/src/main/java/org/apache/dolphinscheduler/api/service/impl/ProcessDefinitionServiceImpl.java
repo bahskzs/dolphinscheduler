@@ -438,8 +438,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
 
 
                 for (TaskDefinitionLog taskDefinitionLog : taskDefinitionList) {
-                    if (taskDefinitionLog.getTaskType().equals(taskType)) {
-
+                    if (taskDefinitionLog.getTaskType().equals(taskType.toUpperCase())) {
                         processDefinitionDtos.add(processDefinitionDto);
                     }
                 }
