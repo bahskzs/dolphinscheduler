@@ -410,19 +410,20 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
         }
         //TODO : 需要追加对应的TaskList，用于前端根据任务类型(datax,sql等等)检索对应的流程
         //  List<TaskDefinitionLog> taskDefinitionList = processService.genTaskDefineList(processTaskRelationMapper.queryByProcessCode(processDefinition.getProjectCode(), processDefinition.getCode()))
+
+        //1.获取全部流程
         Page<ProcessDefinition> page = new Page<>(pageNo, pageSize);
         IPage<ProcessDefinition> processDefinitionIPage = processDefinitionMapper.queryDefineListPaging(
                 page, searchVal, userId, project.getCode(), isAdmin(loginUser));
-
-
         List<ProcessDefinition> records = processDefinitionIPage.getRecords();
+
+        //2. 遍历流程，获取对应类型
         for (ProcessDefinition pd : records) {
             ProcessDefinitionLog processDefinitionLog = processDefinitionLogMapper.queryByDefinitionCodeAndVersion(pd.getCode(), pd.getVersion());
             User user = userMapper.selectById(processDefinitionLog.getOperator());
             pd.setModifyBy(user.getUserName());
         }
 
-        processDefinitionIPage.setRecords(records);
 
         PageInfo<ProcessDefinitionDto> pageInfo = new PageInfo<>(pageNo, pageSize);
         pageInfo.setTotal((int) processDefinitionIPage.getTotal());
@@ -430,20 +431,20 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
         // 加入taskList
         List<ProcessDefinitionDto> processDefinitionDtoList = CopyUtil.copyList(records, ProcessDefinitionDto.class);
         List<ProcessDefinitionDto> processDefinitionDtos = new ArrayList<>();
+
+        // taskType 非空则过滤出对应的taskList
         if (StringUtils.isNotEmpty(taskType)) {
             for (ProcessDefinitionDto processDefinitionDto : processDefinitionDtoList) {
+                //获取当前流程对应的task
                 List<TaskDefinitionLog> taskDefinitionList =
                         processService.genTaskDefineList(processTaskRelationMapper.queryByProcessCode(processDefinitionDto.getProjectCode(), processDefinitionDto.getCode()));
-                //查询到的task集合返回给前端
-
-
+                //遍历task,传递符合taskType的流程
                 for (TaskDefinitionLog taskDefinitionLog : taskDefinitionList) {
-                    if (taskDefinitionLog.getTaskType().equals(taskType.toUpperCase())) {
+                    if (taskDefinitionLog.getTaskType().equals(taskType.toUpperCase()) && processDefinitionDto.getTaskDefinitionList() == null) {
                         processDefinitionDtos.add(processDefinitionDto);
+                        processDefinitionDto.setTaskDefinitionList(taskDefinitionList);
                     }
                 }
-
-
                 processDefinitionDto.setTaskDefinitionList(taskDefinitionList);
 
             }
