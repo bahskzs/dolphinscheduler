@@ -124,7 +124,7 @@ public class JSONUtils {
         }
 
         try {
-            return objectMapper.readValue(json, clazz);
+                return objectMapper.readValue(json, clazz);
         } catch (Exception e) {
             logger.error("parse object exception!", e);
         }
@@ -273,6 +273,8 @@ public class JSONUtils {
         }
     }
 
+
+
     /**
      * serialize to json byte
      *
@@ -342,4 +344,6 @@ public class JSONUtils {
         }
 
     }
+
+
 }

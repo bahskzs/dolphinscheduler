@@ -26,7 +26,7 @@
               size="small"
               v-model="localParamsList[$index].prop"
               :placeholder="$t('prop(required)')"
-              maxlength="256"
+              maxlength="600"
               @blur="_verifProp()"
               :style="inputStyle">
       </el-input>

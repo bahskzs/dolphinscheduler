@@ -19,6 +19,8 @@ package org.apache.dolphinscheduler.api.service.impl;
 
 import static org.apache.dolphinscheduler.common.Constants.CMD_PARAM_SUB_PROCESS_DEFINE_CODE;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.dolphinscheduler.api.configuration.HadoopConfiguration;
 import org.apache.dolphinscheduler.api.dto.DagDataSchedule;
 import org.apache.dolphinscheduler.api.dto.ProcessDefinitionDto;
 import org.apache.dolphinscheduler.api.dto.ScheduleParam;
@@ -70,6 +72,7 @@ import org.apache.dolphinscheduler.dao.mapper.TaskDefinitionMapper;
 import org.apache.dolphinscheduler.dao.mapper.TaskInstanceMapper;
 import org.apache.dolphinscheduler.dao.mapper.TenantMapper;
 import org.apache.dolphinscheduler.dao.mapper.UserMapper;
+import org.apache.dolphinscheduler.plugin.task.datax.DataxUtils;
 import org.apache.dolphinscheduler.service.process.ProcessService;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -163,6 +166,9 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
 
     @Resource
     private TenantMapper tenantMapper;
+
+    @Resource
+    private HadoopConfiguration hadoopConfiguration;
 
     /**
      * create process definition
@@ -1018,6 +1024,39 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
         Date now = new Date();
         List<TaskDefinitionLog> taskDefinitionLogList = new ArrayList<>();
         for (TaskDefinition taskDefinition : taskDefinitionList) {
+
+            // 追加 :hadoopConfiguratio非空且task是否是DATAX类型，如果是,那么追加上对应hadoop的配置
+            if(!hadoopConfiguration.getParameters().isEmpty() && "DATAX".equals(taskDefinition.getTaskType())) {
+                String taskParams = taskDefinition.getTaskParams();
+
+                // 1.获取到datax任务中的json串
+                String json = JSONUtils.getNodeString(taskParams,"json");
+                // 2.获取 hadoopConfiguration
+                Map<String, Object> parameters = hadoopConfiguration.getParameters();
+
+                // 3.判断reader还是writer是hdfs类型的
+                Map<String, String> pluginMap = new HashMap<>();
+                try {
+                    //去除datax json 多余符号问题
+                    json = DataxUtils.format(json);
+                    pluginMap = DataxUtils.getPluginName(json);
+                    // 4.遍历reader/writer 调用工具类在json中追加hadoopConfig配置
+                    for (String plugin : pluginMap.keySet()) {
+                        if((pluginMap.get(plugin).contains("hdfs"))) {
+                            json = DataxUtils.appendParameterConfig(json,plugin,"hadoopConfig",JSONUtils.toJsonString(parameters));
+                        }
+                    }
+                    // 5.taskParams对应赋值
+                    ObjectNode taskParamsNode = JSONUtils.parseObject(taskParams);
+                    taskParamsNode.put("json",json);
+                    taskDefinition.setTaskParams(taskParamsNode.toString());
+
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+
             TaskDefinitionLog taskDefinitionLog = new TaskDefinitionLog(taskDefinition);
             taskDefinitionLog.setName(taskDefinitionLog.getName() + "_import_" + DateUtils.getCurrentTimeStamp());
             taskDefinitionLog.setProjectCode(projectCode);
