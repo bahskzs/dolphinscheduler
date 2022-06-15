@@ -48,6 +48,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+
         </dependency>
 
         <dependency>
@@ -92,7 +93,6 @@
                     <groupId>org.codehaus.jackson</groupId>
                     <artifactId>jackson-xc</artifactId>
                 </exclusion>
-
                 <exclusion>
                     <groupId>org.fusesource.leveldbjni</groupId>
                     <artifactId>leveldbjni-all</artifactId>
@@ -121,9 +121,48 @@
                     <artifactId>log4j</artifactId>
                     <groupId>log4j</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>jackson-core-asl</artifactId>
+                    <groupId>org.codehaus.jackson</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jackson-mapper-asl</artifactId>
+                    <groupId>org.codehaus.jackson</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jsr305</artifactId>
+                    <groupId>com.google.code.findbugs</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>protobuf-java</artifactId>
+                    <groupId>com.google.protobuf</groupId>
+                </exclusion>
+<!--                <exclusion>-->
+<!--                    <artifactId>commons-collections</artifactId>-->
+<!--                    <groupId>commons-collections</groupId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>commons-httpclient</artifactId>-->
+<!--                    <groupId>commons-httpclient</groupId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>netty</artifactId>-->
+<!--                    <groupId>io.netty</groupId>-->
+<!--                </exclusion>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>commons-compress</artifactId>-->
+<!--                    <groupId>org.apache.commons</groupId>-->
+<!--                </exclusion>-->
             </exclusions>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <artifactId>protobuf-java</artifactId>
+            <groupId>com.google.protobuf</groupId>
+        </dependency>
+
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>

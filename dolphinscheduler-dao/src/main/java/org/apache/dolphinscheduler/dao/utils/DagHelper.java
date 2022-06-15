@@ -17,6 +17,7 @@
 
 package org.apache.dolphinscheduler.dao.utils;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.dolphinscheduler.common.enums.TaskDependType;
 import org.apache.dolphinscheduler.common.graph.DAG;
 import org.apache.dolphinscheduler.common.model.TaskNode;
@@ -29,7 +30,7 @@ import org.apache.dolphinscheduler.common.utils.JSONUtils;
 import org.apache.dolphinscheduler.dao.entity.ProcessTaskRelation;
 import org.apache.dolphinscheduler.dao.entity.TaskInstance;
 
-import org.apache.commons.collections.CollectionUtils;
+
 
 import java.util.ArrayList;
 import java.util.Collection;

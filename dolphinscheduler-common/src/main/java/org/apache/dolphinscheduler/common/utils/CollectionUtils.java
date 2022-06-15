@@ -63,7 +63,7 @@ public class CollectionUtils {
             return false;
         }
 
-        return org.apache.commons.collections.CollectionUtils.isEqualCollection(a, b);
+        return org.apache.commons.collections4.CollectionUtils.isEqualCollection(a, b);
     }
 
     /**

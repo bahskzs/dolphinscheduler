@@ -43,6 +43,8 @@ import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
+import javax.annotation.Resource;
+
 /**
  * access token service impl
  */

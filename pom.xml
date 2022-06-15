@@ -59,39 +59,41 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <curator.version>4.3.0</curator.version>
         <zookeeper.version>3.4.14</zookeeper.version>
-        <spring.version>5.3.12</spring.version>
+        <spring.version>5.3.20</spring.version>
         <spring.boot.version>2.5.6</spring.boot.version>
         <java.version>1.8</java.version>
-        <logback.version>1.2.3</logback.version>
-        <hadoop.version>2.7.3</hadoop.version>
-        <quartz.version>2.3.0</quartz.version>
-        <jackson.version>2.10.5</jackson.version>
+        <logback.version>1.2.9</logback.version>
+        <hadoop.version>3.2.3</hadoop.version>
+        <quartz.version>2.3.2</quartz.version>
+        <jackson.version>2.13.3</jackson.version>
         <mybatis-plus.version>3.2.0</mybatis-plus.version>
         <mybatis.spring.version>2.0.1</mybatis.spring.version>
-        <cron.utils.version>9.1.3</cron.utils.version>
+        <mybatis.version>3.5.10</mybatis.version>
+
+        <cron.utils.version>9.1.6</cron.utils.version>
         <druid.version>1.2.4</druid.version>
-        <h2.version>1.4.200</h2.version>
-        <commons.codec.version>1.11</commons.codec.version>
+        <h2.version>2.1.212</h2.version>
+        <commons.codec.version>1.13</commons.codec.version>
         <commons.logging.version>1.1.1</commons.logging.version>
-        <httpclient.version>4.4.1</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
         <httpcore.version>4.4.1</httpcore.version>
         <junit.version>4.12</junit.version>
-        <mysql.connector.version>8.0.16</mysql.connector.version>
+        <mysql.connector.version>8.0.28</mysql.connector.version>
         <slf4j.api.version>1.7.5</slf4j.api.version>
         <slf4j.log4j12.version>1.7.5</slf4j.log4j12.version>
         <commons.collections.version>3.2.2</commons.collections.version>
-        <commons.httpclient>3.0.1</commons.httpclient>
+        <commons.httpclient>3.1</commons.httpclient>
         <commons.beanutils.version>1.9.4</commons.beanutils.version>
         <commons.configuration.version>1.10</commons.configuration.version>
         <commons.lang.version>2.6</commons.lang.version>
         <commons.email.version>1.5</commons.email.version>
         <poi.version>4.1.2</poi.version>
         <javax.servlet.api.version>3.1.0</javax.servlet.api.version>
-        <commons.collections4.version>4.1</commons.collections4.version>
-        <guava.version>24.1-jre</guava.version>
-        <postgresql.version>42.2.5</postgresql.version>
-        <hive.jdbc.version>2.1.0</hive.jdbc.version>
-        <commons.io.version>2.4</commons.io.version>
+        <commons.collections4.version>4.3</commons.collections4.version>
+        <guava.version>31.0.1-jre</guava.version>
+        <postgresql.version>42.3.3</postgresql.version>
+        <hive.jdbc.version>2.3.9</hive.jdbc.version>
+        <commons.io.version>2.7</commons.io.version>
         <oshi.core.version>3.9.1</oshi.core.version>
         <clickhouse.jdbc.version>0.1.52</clickhouse.jdbc.version>
         <mssql.jdbc.version>6.1.0.jre8</mssql.jdbc.version>
@@ -127,9 +129,12 @@
         <py4j.version>0.10.9</py4j.version>
         <auto-service.version>1.0.1</auto-service.version>
         <jacoco.skip>false</jacoco.skip>
-        <netty.version>4.1.53.Final</netty.version>
+        <netty.version>4.1.77.Final</netty.version>
         <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
         <hibernate.validator.version>6.2.2.Final</hibernate.validator.version>
+        <protobuf.verson>3.19.2</protobuf.verson>
+        <log4j-core.version>2.17.2</log4j-core.version>
+        <xerces.version>2.12.2</xerces.version>
     </properties>
 
     <dependencyManagement>
@@ -170,6 +175,7 @@
                 <artifactId>mybatis-plus</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
+
             <!-- quartz-->
             <dependency>
                 <groupId>org.quartz-scheduler</groupId>
@@ -220,6 +226,11 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
                 <version>${spring.version}</version>
                 <scope>test</scope>
@@ -241,12 +252,12 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.dolphinscheduler</groupId>
-                <artifactId>dolphinscheduler-alert-plugin</artifactId>
+                <artifactId>dolphinscheduler-alert-plugins</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.dolphinscheduler</groupId>
-                <artifactId>dolphinscheduler-registry-plugin</artifactId>
+                <artifactId>dolphinscheduler-registry-plugins</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -715,6 +726,12 @@
             </dependency>
 
             <dependency>
+                <artifactId>xercesImpl</artifactId>
+                <groupId>xerces</groupId>
+                <version>${xerces.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
                 <version>${commons.collections4.version}</version>
@@ -837,6 +854,18 @@
                 <groupId>net.sf.py4j</groupId>
                 <artifactId>py4j</artifactId>
                 <version>${py4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <artifactId>protobuf-java</artifactId>
+                <groupId>com.google.protobuf</groupId>
+                <version>${protobuf.verson}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j-core.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -1112,6 +1141,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>

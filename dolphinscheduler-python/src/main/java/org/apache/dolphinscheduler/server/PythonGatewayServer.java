@@ -75,7 +75,7 @@ import org.springframework.context.annotation.FilterType;
 
 import py4j.GatewayServer;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 @ComponentScan(value = "org.apache.dolphinscheduler", excludeFilters = {
     @ComponentScan.Filter(type = FilterType.REGEX, pattern = {

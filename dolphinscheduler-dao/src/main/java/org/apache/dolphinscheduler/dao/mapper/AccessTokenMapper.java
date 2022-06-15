@@ -19,6 +19,7 @@ package org.apache.dolphinscheduler.dao.mapper;
 
 import org.apache.dolphinscheduler.dao.entity.AccessToken;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -30,6 +31,7 @@ import java.util.List;
 /**
  * accesstoken mapper interface
  */
+@Mapper
 public interface AccessTokenMapper extends BaseMapper<AccessToken> {
 
 
