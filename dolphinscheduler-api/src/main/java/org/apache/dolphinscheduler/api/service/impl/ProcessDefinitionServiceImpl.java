@@ -20,7 +20,7 @@ package org.apache.dolphinscheduler.api.service.impl;
 import static org.apache.dolphinscheduler.common.Constants.CMD_PARAM_SUB_PROCESS_DEFINE_CODE;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.apache.dolphinscheduler.api.configuration.HadoopConfiguration;
+import org.apache.dolphinscheduler.api.configuration.CustomHadoopConfiguration;
 import org.apache.dolphinscheduler.api.dto.DagDataSchedule;
 import org.apache.dolphinscheduler.api.dto.ProcessDefinitionDto;
 import org.apache.dolphinscheduler.api.dto.ScheduleParam;
@@ -72,7 +72,6 @@ import org.apache.dolphinscheduler.dao.mapper.TaskDefinitionMapper;
 import org.apache.dolphinscheduler.dao.mapper.TaskInstanceMapper;
 import org.apache.dolphinscheduler.dao.mapper.TenantMapper;
 import org.apache.dolphinscheduler.dao.mapper.UserMapper;
-import org.apache.dolphinscheduler.plugin.task.datax.DataxUtils;
 import org.apache.dolphinscheduler.service.process.ProcessService;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -168,7 +167,7 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
     private TenantMapper tenantMapper;
 
     @Resource
-    private HadoopConfiguration hadoopConfiguration;
+    private CustomHadoopConfiguration customHadoopConfiguration;
 
     /**
      * create process definition
@@ -1026,13 +1025,13 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
         for (TaskDefinition taskDefinition : taskDefinitionList) {
 
             // 追加 :hadoopConfiguratio非空且task是否是DATAX类型，如果是,那么追加上对应hadoop的配置
-            if(!hadoopConfiguration.getParameters().isEmpty() && "DATAX".equals(taskDefinition.getTaskType())) {
+            if(!customHadoopConfiguration.getParameters().isEmpty() && "DATAX".equals(taskDefinition.getTaskType())) {
                 String taskParams = taskDefinition.getTaskParams();
 
                 // 1.获取到datax任务中的json串
                 String json = JSONUtils.getNodeString(taskParams,"json");
                 // 2.获取 hadoopConfiguration
-                Map<String, Object> parameters = hadoopConfiguration.getParameters();
+                Map<String, Object> parameters = customHadoopConfiguration.getParameters();
 
                 // 3.判断reader还是writer是hdfs类型的
                 Map<String, String> pluginMap = new HashMap<>();

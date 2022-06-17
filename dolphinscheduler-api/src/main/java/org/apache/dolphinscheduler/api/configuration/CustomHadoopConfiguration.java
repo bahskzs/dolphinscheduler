@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class HadoopConfiguration {
+public class CustomHadoopConfiguration {
 
     @Value("${hadoop.ha}")
     private String mode;

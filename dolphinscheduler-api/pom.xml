@@ -260,10 +260,7 @@
             </exclusions>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.dolphinscheduler</groupId>
-            <artifactId>dolphinscheduler-task-datax</artifactId>
-        </dependency>
+
     </dependencies>
 
     <build>
