@@ -25,7 +25,7 @@
 <!--            <el-input v-model="searchParams.taskType" @keyup.enter.native="_ckQuery" style="width: 200px;" size="mini" :placeholder="$t('Task Type')">-->
 <!--                   <i slot="prefix" class="el-input__icon el-icon-search" ></i>-->
 <!--            </el-input>-->
-            <el-input v-model="taskType" @keydown.enter.native="_ckQuery(taskType)" style="width: 200px;" size="mini" :placeholder="$t('Task Type')">
+            <el-input v-model="taskType" @keydown.enter.native="_query(taskType)" style="width: 200px;" size="mini" :placeholder="$t('Task Type')">
                 <i slot="prefix" class="el-input__icon el-icon-search" ></i>
             </el-input>
             </template>
@@ -90,9 +90,10 @@
     },
     methods: {
       ...mapActions('dag', ['getProcessListP']),
-      _ckQuery (val) {
+      _query (val) {
         this.searchParams.taskType = val
       },
+
       /**
        * File Upload
        */
@@ -112,8 +113,9 @@
        * conditions
        */
       _onConditions (o) {
-        this.searchParams.searchVal = <o className="searchVal"></o>
+        // this.searchParams.searchVal = ''
         this.searchParams.pageNo = 1
+        this.searchParams.searchVal = o.searchVal
       },
       /**
        * get data list
@@ -125,6 +127,7 @@
           this.isLeft = true
         }
         this.isLoading = !flag
+        console.log(this.searchParams)
         this.getProcessListP(this.searchParams).then(res => {
           if (this.searchParams.pageNo > 1 && res.totalList.length === 0) {
             this.searchParams.pageNo = this.searchParams.pageNo - 1
