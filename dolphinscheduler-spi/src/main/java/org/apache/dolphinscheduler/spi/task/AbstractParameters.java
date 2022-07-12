@@ -96,7 +96,7 @@ public abstract class AbstractParameters implements IParameters {
         }
     }
 
-    public void dealOutParam(String result) {
+    public void dealOutParam(String result,String type) {
         if (CollectionUtils.isEmpty(localParams)) {
             return;
         }
@@ -113,6 +113,7 @@ public abstract class AbstractParameters implements IParameters {
             return;
         }
         for (Property info : outProperty) {
+
             info.setValue(taskResult.get(info.getProp()));
             varPool.add(info);
         }
@@ -157,5 +158,6 @@ public abstract class AbstractParameters implements IParameters {
         }
         return format;
     }
+
 
 }

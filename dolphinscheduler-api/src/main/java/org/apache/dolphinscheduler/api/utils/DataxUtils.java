@@ -17,18 +17,12 @@
 
 package org.apache.dolphinscheduler.api.utils;
 
-import com.alibaba.druid.sql.dialect.clickhouse.parser.ClickhouseStatementParser;
-import com.alibaba.druid.sql.dialect.mysql.parser.MySqlStatementParser;
-import com.alibaba.druid.sql.dialect.oracle.parser.OracleStatementParser;
-import com.alibaba.druid.sql.dialect.postgresql.parser.PGSQLStatementParser;
-import com.alibaba.druid.sql.dialect.sqlserver.parser.SQLServerStatementParser;
-import com.alibaba.druid.sql.parser.SQLStatementParser;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.dolphinscheduler.spi.enums.DbType;
 import org.apache.dolphinscheduler.spi.utils.JSONUtils;
 
 import java.util.HashMap;

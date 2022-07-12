@@ -203,7 +203,7 @@ public class SqlTask extends AbstractTaskExecutor {
                 result = setNonQuerySqlReturn(updateResult, sqlParameters.getLocalParams());
             }
             //deal out params
-            sqlParameters.dealOutParam(result);
+            sqlParameters.dealOutParam(result,DbType.valueOf(sqlParameters.getType()).getDescp());
             postSql(connection, postStatementsBinds);
         } catch (Exception e) {
             logger.error("execute sql error: {}", e.getMessage());

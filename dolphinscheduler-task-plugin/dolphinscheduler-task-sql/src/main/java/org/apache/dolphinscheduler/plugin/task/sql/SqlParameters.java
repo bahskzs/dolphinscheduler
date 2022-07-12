@@ -18,6 +18,7 @@
 package org.apache.dolphinscheduler.plugin.task.sql;
 
 import org.apache.dolphinscheduler.spi.enums.DataType;
+import org.apache.dolphinscheduler.spi.enums.DbType;
 import org.apache.dolphinscheduler.spi.task.AbstractParameters;
 import org.apache.dolphinscheduler.spi.task.Property;
 import org.apache.dolphinscheduler.spi.task.ResourceInfo;
@@ -26,11 +27,7 @@ import org.apache.dolphinscheduler.spi.utils.StringUtils;
 
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Sql/Hql parameter
@@ -226,8 +223,9 @@ public class SqlParameters extends AbstractParameters {
         return new ArrayList<>();
     }
 
+
     @Override
-    public void dealOutParam(String result) {
+    public void dealOutParam(String result, String type) {
         if (CollectionUtils.isEmpty(localParams)) {
             return;
         }
@@ -258,7 +256,11 @@ public class SqlParameters extends AbstractParameters {
             }
             for (Property info : outProperty) {
                 if (info.getType() == DataType.LIST) {
-                    info.setValue(JSONUtils.toJsonString(sqlResultFormat.get(info.getProp())));
+                    if(type.equals(DbType.ORACLE.getDescp())) {
+                        info.setValue(JSONUtils.toJsonString(sqlResultFormat.get(info.getProp().toUpperCase(Locale.ROOT))));
+                    }else {
+                        info.setValue(JSONUtils.toJsonString(sqlResultFormat.get(info.getProp())));
+                    }
                     varPool.add(info);
                 }
             }
@@ -266,7 +268,12 @@ public class SqlParameters extends AbstractParameters {
             //result only one line
             Map<String, String> firstRow = sqlResult.get(0);
             for (Property info : outProperty) {
-                info.setValue(String.valueOf(firstRow.get(info.getProp())));
+                // 由于oracle返回的全部都是大写,所以如果参数名大写才能在oracle中拿到参数
+                if(type.equals(DbType.ORACLE.getDescp())) {
+                    info.setValue(String.valueOf(firstRow.get(info.getProp().toUpperCase(Locale.ROOT))));
+                } else {
+                    info.setValue(String.valueOf(firstRow.get(info.getProp())));
+                }
                 varPool.add(info);
             }
         }
