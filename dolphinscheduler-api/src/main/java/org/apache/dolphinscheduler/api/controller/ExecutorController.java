@@ -240,10 +240,10 @@ public class ExecutorController extends BaseController {
         // 遍历执行集合
         for (String date : dates) {
             // 1.赋值
-            startParamMap.put(startParamName,date);
+            startParamMap.put(startParamName, date);
             // 2.调用实例化
             result = execService.initExecProcessInstance(loginUser, projectCode, processDefinitionCode, scheduleTime, execType, failureStrategy,
-                    startNodeList, taskDependType, warningType, warningGroupId, runMode, processInstancePriority, workerGroup, environmentCode, timeout, startParamMap, expectedParallelismNumber, dryRun,startParamName);
+                    startNodeList, taskDependType, warningType, warningGroupId, runMode, processInstancePriority, workerGroup, environmentCode, timeout, startParamMap, expectedParallelismNumber, dryRun, startParamName);
         }
 
         return returnDataList(result);
@@ -371,6 +371,22 @@ public class ExecutorController extends BaseController {
         Map<String, Object> result = execService.execute(loginUser, projectCode, processInstanceId, executeType);
         return returnDataList(result);
     }
+
+    @ApiOperation(value = "stopAll", notes = "EXECUTE_ACTION_TO_PROCESS_INSTANCE_NOTES")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "projectCode", value = "PROJECT_CODE", required = true, dataType = "Int", example = "100"),
+    })
+    @PostMapping(value = "/stop/all")
+    @ResponseStatus(HttpStatus.OK)
+//    @ApiException(EXECUTE_PROCESS_INSTANCE_ERROR)
+    @AccessLogAnnotation(ignoreRequestArgs = "loginUser")
+    public Result execute(@ApiIgnore @RequestAttribute(value = Constants.SESSION_USER) User loginUser,
+                          @ApiParam(name = "projectCode", value = "PROJECT_CODE", required = true) @PathVariable long projectCode
+    ) {
+        Map<String, Object> result = execService.execute(loginUser, projectCode);
+        return returnDataList(result);
+    }
+
 
     /**
      * check process definition and all of the son process definitions is on line.

@@ -86,6 +86,16 @@ public interface ExecutorService {
      */
     Map<String, Object> execute(User loginUser, long projectCode, Integer processInstanceId, ExecuteType executeType);
 
+
+    /**
+     * do action to process instance：pause, stop, repeat, recover from pause, recover from stop
+     *
+     * @param loginUser login user
+     * @param projectCode project code
+     * @return execute result code
+     */
+    Map<String, Object> execute(User loginUser, long projectCode);
+
     /**
      * check if sub processes are offline before starting process definition
      *

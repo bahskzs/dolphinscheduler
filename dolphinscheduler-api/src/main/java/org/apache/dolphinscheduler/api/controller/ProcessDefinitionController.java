@@ -374,6 +374,19 @@ public class ProcessDefinitionController extends BaseController {
         return returnDataList(result);
     }
 
+    //TODO 批量执行
+    @ApiOperation(value = "releaseAll", notes = "RELEASE_PROJECT_ALL_PROCESS_DEFINITION_NOTES")
+    @PostMapping(value = "/release/all")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiException(RELEASE_PROCESS_DEFINITION_ERROR)
+    @AccessLogAnnotation(ignoreRequestArgs = "loginUser")
+    public Result releaseProcessDefinition(@ApiIgnore @RequestAttribute(value = Constants.SESSION_USER) User loginUser,
+                                           @ApiParam(name = "projectCode", value = "PROJECT_CODE", required = true) @PathVariable long projectCode,
+                                           @RequestParam(value = "releaseState", required = true) ReleaseState releaseState) {
+        Map<String, Object> result = processDefinitionService.releaseProcessDefinition(loginUser, projectCode, releaseState);
+        return returnDataList(result);
+    }
+
     /**
      * query detail of process definition by code
      *

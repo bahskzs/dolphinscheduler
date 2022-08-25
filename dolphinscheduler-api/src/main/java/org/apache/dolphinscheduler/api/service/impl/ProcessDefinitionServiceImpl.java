@@ -871,6 +871,18 @@ public class ProcessDefinitionServiceImpl extends BaseServiceImpl implements Pro
         return result;
     }
 
+    @Override
+    public Map<String, Object> releaseProcessDefinition(User loginUser, long projectCode, ReleaseState releaseState) {
+        // TODO 批量遍历获取需要上/下线的任务
+        Map<String, Object> result = new HashMap<>();
+        List<ProcessDefinition> processDefinitions = processDefinitionMapper.queryAllDefinitionList(projectCode);
+        for (ProcessDefinition processDefinition : processDefinitions) {
+            result = releaseProcessDefinition(loginUser,projectCode,processDefinition.getCode(),releaseState);
+        }
+
+        return result;
+    }
+
     /**
      * batch export process definition by codes
      */

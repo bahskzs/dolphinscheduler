@@ -219,6 +219,18 @@ public interface ProcessDefinitionService {
                                                  long code,
                                                  ReleaseState releaseState);
 
+
+    /**
+     *
+     * @param loginUser
+     * @param projectCode
+     * @param releaseState
+     * @return
+     */
+    Map<String, Object> releaseProcessDefinition(User loginUser,
+                                                 long projectCode,
+                                                 ReleaseState releaseState);
+
     /**
      * batch export process definition by codes
      *

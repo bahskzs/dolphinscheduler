@@ -177,7 +177,10 @@
         <include refid="baseSql"/>
         from t_ds_process_instance
         where process_definition_code=#{processDefinitionCode}
-        order by start_time desc limit #{size}
+        order by start_time desc
+        <if test="size > 0">
+            limit #{size}
+        </if>
     </select>
     <select id="queryLastSchedulerProcess" resultType="org.apache.dolphinscheduler.dao.entity.ProcessInstance">
         select
