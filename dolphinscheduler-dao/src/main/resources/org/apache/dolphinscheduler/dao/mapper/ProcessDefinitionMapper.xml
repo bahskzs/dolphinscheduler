@@ -86,7 +86,7 @@
         process_definition_code,release_state) sc on sc.process_definition_code = td.code
         left join t_ds_user tu on td.user_id = tu.id
         where td.project_code = #{projectCode}
-        <if test=" searchVal != null and searchVal != ''">
+        <if test=" searchVal != null and searchVal != '' and searchVal.length()>=1">
             AND (td.name like concat('%', #{searchVal}, '%')
             OR td.description like concat('%', #{searchVal}, '%')
             )

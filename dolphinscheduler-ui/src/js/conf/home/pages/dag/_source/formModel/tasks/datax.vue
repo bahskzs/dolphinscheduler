@@ -145,11 +145,11 @@
       <div slot="text">{{$t('Running Memory')}}</div>
       <div slot="content">
         <span >{{$t('Min Memory')}}</span>
-        <m-select-input v-model="xms" :list="[1,2,3,4]">
+        <m-select-input v-model="xms" :list=[1,2,3,4] >
         </m-select-input>
         <span>&nbsp;&nbsp;&nbsp;G &nbsp;&nbsp;</span>
         <span >{{$t('Max Memory')}}</span>
-        <m-select-input v-model="xmx" :list="[1,2,3,4]">
+        <m-select-input v-model="xmx" :list=[1,2,3,4]>
         </m-select-input>
         <span>&nbsp;&nbsp;&nbsp;G</span>
       </div>
